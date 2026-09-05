@@ -1,32 +1,145 @@
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
-# Binaries for programs and plugins
+# ==============================================================================
+# analyzeIT .gitignore
+# Public repository: Strictly prohibit committing secrets, keys, and caches.
+# ==============================================================================
+
+# --- Secrets, Credentials, and Private Keys ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.cer
+*.pfx
+*.p12
+*.keystore
+id_rsa*
+id_ed25519*
+*.id_rsa
+*.id_ed25519
+/credentials/
+/secrets/
+credentials.json
+service-account*.json
+service_account*.json
+*.vault
+.aws/
+.gcloud/
+
+# --- Go Cache, Build Artifacts, and Tests ---
+/bin/
+/dist/
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
-
-# Test binary, built with `go test -c`
 *.test
-
-# Code coverage profiles and other test artifacts
 *.out
 coverage.*
 *.coverprofile
 profile.cov
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-# Go workspace file
+*.pprof
+/vendor/
 go.work
 go.work.sum
+.gocache/
+.cache/
+pkg/mod/
 
-# env file
-.env
+# --- Rust & WebAssembly (Wasm) Artifacts ---
+/target/
+**/*.rs.bk
+*.cargo-ok
+*.wasm
+*.wasm.cache
+.wazero/
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# --- Frontend & Node.js Cache (Tracker JS) ---
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.turbo/
+.parcel-cache/
+
+# --- Python Cache and Virtual Environments ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.venv/
+venv/
+
+# --- Runtime, Unix Domain Sockets, and Databases ---
+*.sock
+/run/
+/var/run/
+*.db
+*.db-*
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+
+# --- Local Storage, Data Volumes, and Logs ---
+/data/
+/storage/
+/minio_data/
+/databend_data/
+/nats_data/
+/caddy_data/
+/caddy_config/
+*.log
+logs/
+*.pid
+
+# --- Local Docker Compose Overrides ---
+docker-compose.override.yml
+docker-compose.local.yml
+
+# --- AI Agents, Runtime State, and Brain Memory ---
+.orchestrator/
+.codex/
+.claude/
+.gemini/
+/runtime/
+/brain/
+.system_generated/
+
+# --- IDEs and Editors ---
+.idea/
+.vscode/
+*.code-workspace
+*.swp
+*.swo
+*~
+.#*
+*.sublime-project
+*.sublime-workspace
+
+# --- Operating System and Temporary Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.old

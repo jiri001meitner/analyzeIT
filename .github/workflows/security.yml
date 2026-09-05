@@ -1,0 +1,52 @@
+---
+name: Security & Integrity Audit
+
+"on":
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    name: Gitleaks Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  forbidden-files:
+    name: Forbidden Files & Cache Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify no secrets, DBs, or caches are tracked
+        run: |
+          echo "Kontrola sledovaných souborů v gitu..."
+          FORBIDDEN=$(git ls-files | grep -E \
+            '^(\.env|\.env\..*)$|\.(key|pem|crt|pfx|p12|keystore)$' || true)
+          DATABASES=$(git ls-files | grep -E \
+            '\.(db|sqlite|sqlite3|sock)$|\.db-(wal|shm|journal)$' || true)
+          CACHES=$(git ls-files | grep -E \
+            '(\.gocache/|vendor/|node_modules/|__pycache__/|\.wasm$)' || true)
+          ALL_FOUND=$(printf "%s\n%s\n%s" \
+            "$FORBIDDEN" "$DATABASES" "$CACHES" | \
+            grep -v '^$' | grep -v '^\.env\.example$' || true)
+          if [ -n "$ALL_FOUND" ]; then
+            echo "::error::Nalezeny zakázané soubory (secrets, DB či cache):"
+            echo "$ALL_FOUND"
+            exit 1
+          fi
+          echo "Všechny sledované soubory jsou v pořádku."
