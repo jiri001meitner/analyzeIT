@@ -125,3 +125,20 @@ Containers run **no background cron daemons**. Maintenance tasks (data
 rotation, notifications, scheduled reports) are handled by internal Go loops
 (`time.Ticker` with graceful shutdown handlers) or host-level `systemd.timer`
 units. This prevents orphaned processes and silent failures inside Docker.
+
+## Security boundaries and references
+
+The IP retention modes above are controlled by `IP_STORAGE_MODE`.
+`mask_1_byte` masks the final IPv4 octet and the lower 64 IPv6 bits;
+`mask_2_bytes` masks the final two IPv4 octets. Hash mode uses a rotating
+secret with `IP_SALT_ROTATION_HOURS` (default 24 hours).
+
+Wasm modules have no ambient filesystem, environment, or network access.
+The resource settings are `WASM_MEMORY_LIMIT_MB=64` and
+`WASM_CPU_TIMEOUT_MS=5000`. Offline Ed25519 license verification uses
+`MARKETPLACE_PUBLIC_KEY`.
+
+Repository secret protection, local hooks, and CI checks are documented in
+[knowledge/public_repo_security.md](knowledge/public_repo_security.md).
+These design descriptions do not establish which remote GitHub protections
+are currently enabled. Vulnerability reporting: [SECURITY.md](SECURITY.md).
